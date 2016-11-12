@@ -73,12 +73,12 @@ var IndexTpl= template.Must(template.New("PhoneUI_Index").Parse(`<!DOCTYPE html>
       <div class="list-block contacts-block">
         <div class="list-group">
           <ul>
-		<li class="list-group-title"　id="searchResultListGroup">搜索结果</li>
+		<li class="list-group-title"　id="searchResultListGroup">查询结果</li>
 		<li>
-		 <a href="#router2" ><!--搜索结果也直接链接到具体的详情页，不需要另行请求-->
+		 <a href="#router2" >
 		  <div class="item-content">
 		    <div class="item-inner">
-		      <div class="item-title">请输入信息搜索</div>
+		      <div class="item-title">请查询</div>
 		    </div>
 		  </div>
 		 </a>
