@@ -51,7 +51,7 @@ var IndexTpl= template.Must(template.New("PhoneUI_Index").Parse(`<!DOCTYPE html>
 		<li class="list-group-title">{{.DeptName}}</li>
 		{{range .PList}}
 		<li>
-		 <a href="#{{.PId}}">
+		 <a href="/p?pid={{.PId}}">
 		  <div class="item-content">
 		    <div class="item-inner">
 		      <div class="item-title">{{.Name}}</div>
@@ -92,90 +92,6 @@ var IndexTpl= template.Must(template.New("PhoneUI_Index").Parse(`<!DOCTYPE html>
     </div>
 
 
-<!-- for detail info -->  
-{{range .allPList}}
-
-	<div class="page" id='{{.PId}}'>
-	  <header class="bar bar-nav">
-	    <a class="button button-link button-nav pull-left back" href="">
-	      <span class="icon icon-left"></span>
-	      返回
-	    </a>
-	    <h1 class='title'>{{.Name}}</h1>
-	  </header>
-	  <div class="content">
-	    <div class="list-block">
-		<ul>
-			<li>
-				<div class='item-content'>
-					<div class='item-media'><i class="icon icon-card"></i></div>
-					<div class='item-inner'>
-						<div class="item-title label">姓名</div>
-						<div class="item-input">
-							<input type="text" > {{.Name}} </input>
-						</div>
-						
-					</div>
-				</div>
-			</li>
-			<li>
-				<div class='item-content'>
-					<div class='item-media'><i class="icon icon-app"></i></div>
-					<div class='item-inner'>
-						<div class="item-title label">部门</div>
-						<div class="item-input">
-							<input type="text" >{{.DeptName}}</input>
-						</div>
-						
-					</div>
-				</div>
-			</li>
-			<li>
-				<div class='item-content'>
-					<div class='item-media'><i class="icon icon-message"></i></div>
-					<div class='item-inner'>
-						<div class="item-title label">邮箱</div>
-						<div class="item-input">
-							<a href="mailto:{{.Mail}}"><input type="text" >{{.Mail}}</input></a>
-						</div>
-						
-					</div>
-				</div>
-			</li>
-			<li>
-				<div class='item-content'>
-					<div class='item-media'><i class="icon icon-phone"></i></div>
-					<div class='item-inner'>
-						<div class="item-title label">电话</div>
-						<div class="item-input">
-							<input type="text" >{{.Phone}}</input>
-						</div>
-					</div>
-				</div>
-			</li>
-			<li>
-				<div class='item-content'>
-					<div class='item-media'><i class="icon icon-phone"></i></div>
-					<div class='item-inner'>
-						<div class="item-title label">固话</div>
-						<div class="item-input">
-							<input type="text" >{{.Tel}}</input>
-						</div>
-					</div>
-				</div>
-			</li>
-		</ul>
-	    </div>
-	   <div class="content-block">
-		<div class="row">
-			<div class="col-50"><a href="#" class=" back button button-big button-fill button-danger">取消</a></div>
-                        <div class="col-50"><a href="tel:{{.Phone}}" class="button button-big button-fill button-success">拨打</a></div>
-		</div>
-	   </div>
-	  </div>
-	</div>
-
-{{end}}
 
 <!-- 预留的关于
 <div class="popup popup-about">
@@ -226,9 +142,20 @@ var IndexTpl= template.Must(template.New("PhoneUI_Index").Parse(`<!DOCTYPE html>
 			$("#allcontact").show()
 			$("#searchResult").hide()
 		}
-		//ajax 请求搜索内容
-		//alert("change"+v);
+		else{	//ajax 请求搜索内容
+		var url="/q?q="+v
 		
+		/*
+		$.get(url, function(response){
+		  $("#searchResult").prepend(response)
+		})
+		*/
+		$("#searchResult").load(url)
+
+		}
+		
+
+
 	
 	});
 

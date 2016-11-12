@@ -82,8 +82,8 @@ func GetAllPerson(db * _db.DB) ([] Person,error){
 }
 
 //查询某一人
-func GetPersonById(db * _db.DB,id) (Person,error){
-	var ret Person
+func GetPersonById(db * _db.DB,id int64) (Person,error){
+	var p Person
 
 	rows,err:=db.Query(`select p.p_id,p.p_name,p.p_phone,p.p_tel,
 	p.p_mail ,p.p_position,p.t_id,t.t_name,
@@ -97,18 +97,38 @@ func GetPersonById(db * _db.DB,id) (Person,error){
 		log.Fatal(err)
 	} 
 	for rows.Next() {
-		var p * Person
-		p=new(Person)
 		rows.Scan(&p.PId,&p.Name,&p.Phone,&p.Tel,&p.Mail,&p.Position,&p.TeamId,&p.TeamName,&p.DeptId,&p.DeptName)
-		ret=*p
+
 	}
 	rows.Close()
-	return ret,err
+	return p,err
 }
 
 
 func GetPersonByQuery(db * _db.DB,query string)([] Person,error){
-var p [] Person
-	var err error
-return p,err
+	var ret [] Person
+
+	tmp:="%"+query+"%"
+
+	rows,err:=db.Query(`select p.p_id,p.p_name,p.p_phone,p.p_tel,
+	p.p_mail ,p.p_position,p.t_id,t.t_name,
+	p.d_id,d.d_name
+	from person p,department d,team t
+	where p.t_id=t.t_id
+	and p.d_id=d.d_id
+	and (p.p_name like ? or p.p_mail like ? or p.p_phone like ?)`,tmp,tmp,tmp)
+
+	if nil!=err{
+		log.Fatal(err)
+	}
+
+
+	for rows.Next() {
+		var p * Person
+		p=new(Person)
+		rows.Scan(&p.PId,&p.Name,&p.Phone,&p.Tel,&p.Mail,&p.Position,&p.TeamId,&p.TeamName,&p.DeptId,&p.DeptName)
+		ret=append(ret,*p)
+	}
+	rows.Close()
+	return ret,err
 }

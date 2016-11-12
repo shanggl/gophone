@@ -8,6 +8,8 @@ import(
 	"log"
 	phone_ui "phone_ui"
 	phone_dao "phone_dao"
+	"strconv"
+	"strings"
 
 )
 
@@ -43,15 +45,9 @@ func getIndex(w http.ResponseWriter,r * http.Request){
 		dList[i].PList=pList
 
 	}
-//取所有信息，生成详情页
-	allPList,err:=phone_dao.GetAllPerson(db)
-	if nil!=err{
-		log.Println("error query all Person list ",err)
-	} 
 
 	var m=make(map[string] interface{})
 
-	m["allPList"]=allPList
 	m["DeptList"]=dList
 	
 	err=phone_ui.IndexTpl.Execute(w,m)
@@ -64,7 +60,59 @@ func getIndex(w http.ResponseWriter,r * http.Request){
 }
 //query for preson by id
 
+func getPerson(w http.ResponseWriter, r* http.Request){
+	r.ParseForm()
+	pid,ok:=r.Form["pid"]
+	if  ok {
+		log.Println("query pid  ",pid)
+
+		id,_:=strconv.ParseInt(pid[0],10,64)
+
+		p,err:=phone_dao.GetPersonById(db,id)
+		if nil!=err{
+			log.Println("error query Person list  by id",err)
+		} 
+		var m=make(map[string] interface{})
+		m["person"]=p
+		
+		err=phone_ui.PersonTpl.Execute(w,m)
+		if nil!=err{
+			log.Println("err query Person",err)
+		} 
+	
+	}else{
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("pid not found"))
+	}
+	
+
+}
+
+//query request
+
 func getQuery(w http.ResponseWriter, r* http.Request){
+	r.ParseForm()
+	q,ok:=r.Form["q"]
+	if  ok {
+		log.Println("query value  ",q)
+		v:=strings.TrimSpace(q[0])
+
+		pList,err:=phone_dao.GetPersonByQuery(db,v)
+		if nil!=err{
+			log.Println("error query value",err)
+		} 
+		var m=make(map[string] interface{})
+		m["pList"]=pList
+		
+		err=phone_ui.QueryResultTpl.Execute(w,m)
+		if nil!=err{
+			log.Println("err query Person",err)
+		} 
+	
+	}else{
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("value not found"))
+	}
 
 }
 
@@ -74,7 +122,8 @@ func main(){
 	log.SetFlags(log.Lshortfile | log.LstdFlags)
 	log.Println("Begin Phone Book Server")
 
-	http.HandleFunc("/p",getIndex)
+	http.HandleFunc("/",getIndex)
+	http.HandleFunc("/p",getPerson)
 	http.HandleFunc("/q",getQuery)
 
 	err:=http.ListenAndServe(":9090",nil)
